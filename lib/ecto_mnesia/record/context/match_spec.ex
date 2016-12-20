@@ -78,6 +78,7 @@ defmodule Ecto.Mnesia.Record.Context.MatchSpec do
     field = condition_expression(field, sources, context)
 
     parameters
+    |> unbind(sources)
     |> Enum.map(fn parameter ->
       {:==, field, condition_expression(parameter, sources, context)}
     end)
