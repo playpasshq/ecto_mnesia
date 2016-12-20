@@ -4,6 +4,7 @@ defmodule Ecto.Mnesia.Record do
   """
   alias Ecto.Mnesia.Record.Context
   alias Ecto.Mnesia.Table
+  import Ecto, only: [put_meta: 2]
 
   @doc """
   Convert Ecto Schema struct to tuple that can be inserted to Mnesia.
@@ -35,7 +36,9 @@ defmodule Ecto.Mnesia.Record do
     |> build_result(record, context)
   end
 
-  defp get_result_type(%Ecto.Query.SelectExpr{expr: {:&, [], [0]}}, schema), do: schema.__struct__
+  defp get_result_type(%Ecto.Query.SelectExpr{expr: {:&, [], [0]}}, schema) do
+    schema.__struct__ |> put_meta(state: :loaded)
+  end
   defp get_result_type(%Ecto.Query.SelectExpr{expr: _expr}, _schema), do: []
   defp get_result_type(list, _schema) when is_list(list), do: []
 

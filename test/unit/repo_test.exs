@@ -150,6 +150,14 @@ defmodule Ecto.RepoTest do
 
   # ## Changesets
 
+  test "insert_or_update after retrieving record" do
+    valid = Ecto.Changeset.cast(%SellOffer{id: 5}, %{}, [])
+    assert {:ok, %SellOffer{}} = TestRepo.insert(valid)
+    sell_offer = TestRepo.get(SellOffer, 5)
+    updated = Ecto.Changeset.cast(sell_offer, %{status: "Wicked"}, [:status])
+    assert {:ok, %SellOffer{}} = TestRepo.insert_or_update(updated)
+  end
+
   test "insert, update, insert_or_update and delete accepts changesets" do
     valid = Ecto.Changeset.cast(%SellOffer{id: 2}, %{}, [])
     assert {:ok, %SellOffer{}} = TestRepo.insert(valid)
