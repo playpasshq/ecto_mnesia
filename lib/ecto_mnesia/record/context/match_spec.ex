@@ -55,8 +55,10 @@ defmodule Ecto.Mnesia.Record.Context.MatchSpec do
   end
 
   # Resolve params
-  defp match_conditions(%Ecto.Query{wheres: wheres}, sources, context),
-    do: match_conditions(wheres, sources, context, [])
+  defp match_conditions(%Ecto.Query{wheres: wheres}, sources, context) do
+    match_conditions(wheres, sources, context, [])
+  end
+
   defp match_conditions([], _sources, _context, acc),
     do: acc
   defp match_conditions([%{expr: expr, params: params} | tail], sources, context, acc) do
@@ -73,12 +75,15 @@ defmodule Ecto.Mnesia.Record.Context.MatchSpec do
     {:==, condition_expression(field, sources, context), nil}
   end
 
+  defp match_condition({:in, [], [field, {:^, [], _}]}, sources, context) do
+    match_condition({:in, [], [field, sources]}, sources, context)
+  end
+
   # `:in` is a special case when we need to expand it to multiple `:or`'s
   defp match_condition({:in, [], [field, parameters]}, sources, context) do
     field = condition_expression(field, sources, context)
 
     parameters
-    |> unbind(sources)
     |> Enum.map(fn parameter ->
       {:==, field, condition_expression(parameter, sources, context)}
     end)

@@ -159,12 +159,6 @@ defmodule Ecto.Mnesia.Context.MatchSpecTest do
       assert [{_, [{:or, {:==, @age_field_id, 23}, {:==, @age_field_id, 26}}], _}] = ms(query)
     end
 
-    test "where `in` variable interpolation" do
-      variable = ["ok", "canceled"]
-      query = from so in SellOffer, where: so.status in ^variable
-      assert [{_, [{:or, {:==, @status_field_id, "ok"}, {:==, @status_field_id, "canceled"}}], _}] = ms(query)
-    end
-
     test "with `is_nil`" do
       query = from so in SellOffer, where: is_nil(so.age)
       assert [{_, [{:==, @age_field_id, nil}], _}] = ms(query)
